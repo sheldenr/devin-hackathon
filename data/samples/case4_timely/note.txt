@@ -1,0 +1,25 @@
+SHORELINE URGENT CARE
+Visit Note
+
+Patient: Raymond Delgado    DOB: 09/05/1980    MRN: 99213
+Date: 02/11/2025
+Provider: Tom Becker, PA-C    NPI: 1144772233
+
+CHIEF COMPLAINT: Right wrist injury after fall.
+
+HISTORY: 44-year-old male slipped on ice in a parking lot approximately
+3 hours ago, landing on his outstretched right hand. Immediate wrist pain
+and swelling. Denies head injury, numbness, or other complaints.
+
+EXAM: Tenderness and swelling over the distal radius. Pain with wrist
+extension. Neurovascularly intact distally. Grip strength reduced by pain.
+
+X-RAY (3 views): Non-displaced distal radius fracture, right wrist.
+
+ASSESSMENT: Distal radius fracture, right (S52.501A); fall on ice (W00.0XXA).
+
+PLAN: Volar splint applied. Ice, elevation, OTC analgesia. Referral to
+orthopedics within 5–7 days. Return precautions reviewed.
+
+Tom Becker, PA-C
+Electronically signed 02/11/2025

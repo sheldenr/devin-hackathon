@@ -1,0 +1,47 @@
+{
+  "denial_info": {
+    "payer": "BluePeak Benefits",
+    "claim_amount": 210.0,
+    "cpt_codes": [
+      "99215"
+    ],
+    "icd10_codes": [
+      "I10"
+    ],
+    "carc_code": "CO-150",
+    "category": "coding",
+    "denial_reason_text": "99215 denied \u2014 documentation supports only level 3 (99213); claim denied rather than downcoded.",
+    "service_date": "04/02/2026",
+    "claim_reference": "<CLAIM_NUM_1>"
+  },
+  "evidence": [
+    {
+      "fact": "The visit was a routine follow-up for one stable chronic condition \u2014 level-3 complexity per policy EM-07.",
+      "quote_from_note": "Hypertension diagnosed 2023, controlled on lisinopril 10 mg daily.",
+      "supports": false
+    },
+    {
+      "fact": "Assessment confirms stable disease \u2014 supports the payer's 99213 position, not 99215.",
+      "quote_from_note": "Essential hypertension (I10), stable and well-controlled on current regimen.",
+      "supports": false
+    },
+    {
+      "fact": "Plan was low-risk: continue medication and routine labs \u2014 not high-complexity MDM.",
+      "quote_from_note": "Continue lisinopril 10 mg daily. Continue home BP monitoring. Routine labs ordered",
+      "supports": false
+    }
+  ],
+  "scoring": {
+    "score": 45,
+    "base_estimate": 30,
+    "action": "FIX_AND_RESUBMIT",
+    "reasons": [
+      "Model's base assessment: 30/100 \u2014 the chart supports the payer's position, not 99215.",
+      "-30 \u2014 no supporting evidence found in the chart (all quotes undermine the billed level).",
+      "+15 \u2014 'coding' denials are usually fixable without a formal appeal.",
+      "Payer says the claim is payable if resubmitted at the documented level (99213).",
+      "Final score 45/100 \u2192 recommended action: FIX_AND_RESUBMIT."
+    ]
+  },
+  "denial_sha256": "9188dc304a5d305bed9e5a42b2a779cfb9512abea9a4a1945e950a8802e76b4c"
+}

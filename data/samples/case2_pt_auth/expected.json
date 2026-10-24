@@ -1,0 +1,50 @@
+{
+  "denial_info": {
+    "payer": "Cascade Mutual Insurance",
+    "claim_amount": 1120.0,
+    "cpt_codes": [
+      "97110",
+      "97140"
+    ],
+    "icd10_codes": [],
+    "carc_code": "CO-197",
+    "category": "prior_auth",
+    "denial_reason_text": "PT visits 13\u201320 denied because pre-authorization beyond the initial 12 visits was absent.",
+    "service_date": "03/03/2026\u201303/31/2026",
+    "claim_reference": "<CLAIM_NUM_1>"
+  },
+  "evidence": [
+    {
+      "fact": "The office states an authorization request was submitted before the denied visits.",
+      "quote_from_note": "Authorization request for visits 13\u201320 was submitted by our office on 02/26/2026; we have not received a determination.",
+      "supports": true
+    },
+    {
+      "fact": "Progress notes document measurable improvement consistent with the post-op ACL protocol.",
+      "quote_from_note": "Right knee ROM 0\u2013128 degrees (was 0\u2013115 at visit 8).",
+      "supports": true
+    },
+    {
+      "fact": "Treating therapist states continued skilled PT is medically necessary; premature discharge risks graft strain.",
+      "quote_from_note": "unassisted discharge now risks graft strain and poor long-term outcome.",
+      "supports": true
+    },
+    {
+      "fact": "Persistent strength and movement-quality deficits remain.",
+      "quote_from_note": "quad strength deficit and movement quality deficits persist.",
+      "supports": true
+    }
+  ],
+  "scoring": {
+    "score": 68,
+    "base_estimate": 48,
+    "action": "APPEAL",
+    "reasons": [
+      "Model's base assessment: 48/100 \u2014 auth was genuinely absent, but the policy allows retroactive auth.",
+      "+20 \u2014 two or more supporting quotes found in the chart.",
+      "Payer policy PT-02 allows retrospective authorization when a timely request is documented \u2014 the note says one was submitted 02/26/2026.",
+      "Final score 68/100 \u2192 recommended action: APPEAL."
+    ]
+  },
+  "denial_sha256": "168b06d63e7491d2c2e07e6edbdd80eb2ad86584e74ecfb319cafbfb1d8dba9a"
+}

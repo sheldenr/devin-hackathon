@@ -1,0 +1,52 @@
+{
+  "denial_info": {
+    "payer": "Meridian Health Plan",
+    "claim_amount": 1840.0,
+    "cpt_codes": [
+      "72148"
+    ],
+    "icd10_codes": [
+      "M54.5",
+      "M51.26"
+    ],
+    "carc_code": "CO-50",
+    "category": "medical_necessity",
+    "denial_reason_text": "MRI of the lumbar spine denied as not medically necessary; payer policy requires 6 weeks of failed conservative management or progressive neurological findings.",
+    "service_date": "03/14/2026",
+    "claim_reference": "<CLAIM_NUM_1>"
+  },
+  "evidence": [
+    {
+      "fact": "Patient completed 8 weeks of structured physical therapy with minimal improvement \u2014 exceeds the payer's 6-week requirement.",
+      "quote_from_note": "She has completed eight (8) weeks of structured physical therapy (01/05/2026\u201302/27/2026) with minimal improvement.",
+      "supports": true
+    },
+    {
+      "fact": "New progressive neurological findings: diminished left Achilles reflex and 4/5 EHL strength.",
+      "quote_from_note": "Left Achilles reflex diminished (1+) versus right (2+). Strength 4/5 left extensor hallucis longus.",
+      "supports": true
+    },
+    {
+      "fact": "Positive tension sign with dermatomal sensory loss \u2014 meets the payer's red-flag criterion.",
+      "quote_from_note": "Straight-leg raise positive on the left at 40 degrees, reproducing her calf pain.",
+      "supports": true
+    },
+    {
+      "fact": "Ordering clinician explicitly tied the MRI to failed conservative care and progressive findings.",
+      "quote_from_note": "Given eight weeks of failed conservative management and new progressive motor and reflex findings on exam, I am ordering an MRI",
+      "supports": true
+    }
+  ],
+  "scoring": {
+    "score": 85,
+    "base_estimate": 65,
+    "action": "APPEAL",
+    "reasons": [
+      "Model's base assessment: 65/100 \u2014 medical-necessity denials overturn often when documented.",
+      "+20 \u2014 two or more supporting quotes found in the chart.",
+      "Chart shows 8 weeks of failed PT (payer requires 6) plus progressive neuro findings \u2014 meets both policy prongs.",
+      "Final score 85/100 \u2192 recommended action: APPEAL."
+    ]
+  },
+  "denial_sha256": "2ff85deb9101bb667627243f53256f74c2e72d0bf885b0323b148d2e32106476"
+}

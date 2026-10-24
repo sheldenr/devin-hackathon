@@ -1,0 +1,6 @@
+# Sample patient names — demo safety net for redaction (all synthetic)
+Marlene Kowalski
+David Okafor
+Susan Park
+Raymond Delgado
+Aisha Rahman

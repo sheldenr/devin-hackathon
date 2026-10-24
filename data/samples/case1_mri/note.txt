@@ -1,0 +1,36 @@
+RIVERBEND SPINE & FAMILY MEDICINE
+Office Visit Note
+
+Patient: Marlene Kowalski    DOB: 07/22/1968    MRN: 884129
+Date of visit: 03/14/2026
+Provider: Elena Voss, MD    NPI: 1043729185
+
+CHIEF COMPLAINT: Persistent low back pain with left leg radiation x 4 months.
+
+HISTORY: 57-year-old female presents with worsening lumbar pain radiating to
+the left posterior thigh and calf, present since late November 2025. Pain
+rated 7/10, worse with sitting and forward flexion. She has completed eight
+(8) weeks of structured physical therapy (01/05/2026–02/27/2026) with minimal
+improvement. She has trialed NSAIDs (ibuprofen 600 mg TID x 6 weeks) and a
+course of cyclobenzaprine without durable relief. Pain now interferes with
+her ability to work full shifts as a warehouse supervisor.
+
+EXAM: Antalgic gait. Lumbar flexion limited to 45 degrees with pain.
+Straight-leg raise positive on the left at 40 degrees, reproducing her calf
+pain. Left Achilles reflex diminished (1+) versus right (2+). Strength 4/5
+left extensor hallucis longus. Sensation reduced over the left lateral foot.
+No saddle anesthesia, no bowel/bladder changes.
+
+ASSESSMENT:
+1. Low back pain with left-sided radiculopathy (M54.5)
+2. Suspected L5-S1 disc herniation with early L5 radiculopathy (M51.26)
+
+PLAN: Given eight weeks of failed conservative management and new
+progressive motor and reflex findings on exam, I am ordering an MRI of the
+lumbar spine without contrast (CPT 72148) to evaluate for disc herniation
+and nerve root compression. If imaging confirms a surgical lesion, will refer
+to neurosurgery. Continue home exercise program; return to work with
+20-lb lifting restriction.
+
+Elena Voss, MD
+Electronically signed 03/14/2026

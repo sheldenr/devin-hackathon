@@ -1,0 +1,30 @@
+CASCADE PHYSICAL THERAPY
+Progress Note — Visit 14
+
+Patient: David Okafor    DOB: 11/30/1992    MRN: 55208
+Date: 03/10/2026
+Therapist: Marcus Chen, DPT    NPI: 1881204736
+
+SUBJECTIVE: 33-year-old male, status post ACL reconstruction (right knee,
+01/20/2026, autograft). Now 7 weeks post-op, PT visit 14 of a planned 24.
+Reports improved confidence with stair negotiation. Denies giving-way
+episodes. Pain 2/10 at rest, 4/10 with single-leg loading.
+
+OBJECTIVE: Right knee ROM 0–128 degrees (was 0–115 at visit 8). Quad
+strength right 4/5 versus left 5/5. Effusion 1+ (down from 2+). Able to
+perform single-leg squat to 45 degrees with mild valgus deviation — not yet
+cleared for running. Lachman's test negative, graft intact.
+
+ASSESSMENT: Healing appropriately but quad strength deficit and movement
+quality deficits persist. Continued skilled PT is medically necessary per
+post-op ACL protocol; unassisted discharge now risks graft strain and
+poor long-term outcome.
+
+PLAN: Continue PT 2x/week for 8 additional visits, then re-evaluate.
+Authorization request for visits 13–20 was submitted by our office on
+02/26/2026; we have not received a determination. Progress notes were
+faxed to the payer on 03/02/2026. Will continue current protocol per
+surgeon's orders (Dr. Ito).
+
+Marcus Chen, DPT
+Electronically signed 03/10/2026

@@ -1,0 +1,43 @@
+{
+  "denial_info": {
+    "payer": "Atlantic Surety Health",
+    "claim_amount": 385.0,
+    "cpt_codes": [
+      "99283"
+    ],
+    "icd10_codes": [
+      "S52.501A",
+      "W00.0XXA"
+    ],
+    "carc_code": "CO-29",
+    "category": "timely_filing",
+    "denial_reason_text": "Claim denied for expired filing limit \u2014 received 423 days after service; contract requires submission within 90 days.",
+    "service_date": "02/11/2025",
+    "claim_reference": "<CLAIM_NUM_1>"
+  },
+  "evidence": [
+    {
+      "fact": "Note documents a straightforward fracture visit \u2014 nothing bearing on the timeliness issue.",
+      "quote_from_note": "Non-displaced distal radius fracture, right wrist.",
+      "supports": false
+    },
+    {
+      "fact": "No documentation of an earlier timely submission or payer system failure exists in the record.",
+      "quote_from_note": "Volar splint applied. Ice, elevation, OTC analgesia.",
+      "supports": false
+    }
+  ],
+  "scoring": {
+    "score": 5,
+    "base_estimate": 15,
+    "action": "DO_NOT_APPEAL",
+    "reasons": [
+      "Model's base assessment: 15/100 \u2014 the visit itself is clean but the denial is procedural.",
+      "-30 \u2014 no supporting evidence found in the chart.",
+      "-40 \u2014 timely-filing denials past the deadline almost never overturn.",
+      "Claim was 333 days past the 90-day contractual limit with no proof of timely submission.",
+      "Final score 5/100 \u2192 recommended action: DO_NOT_APPEAL."
+    ]
+  },
+  "denial_sha256": "4ada59378d08b492ce6efddf8d674313a0619ecc83786994c69e045279b5441c"
+}

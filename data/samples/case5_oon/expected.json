@@ -1,0 +1,46 @@
+{
+  "denial_info": {
+    "payer": "Summit Care Alliance",
+    "claim_amount": 1050.0,
+    "cpt_codes": [
+      "90837"
+    ],
+    "icd10_codes": [
+      "F41.1"
+    ],
+    "carc_code": "PR-96",
+    "category": "not_covered",
+    "denial_reason_text": "Out-of-network psychotherapy denied \u2014 plan has no out-of-network behavioral health benefit.",
+    "service_date": "02/24/2026\u201303/31/2026",
+    "claim_reference": "<CLAIM_NUM_1>"
+  },
+  "evidence": [
+    {
+      "fact": "Patient documented a network-adequacy problem: no in-network therapist available within access standards.",
+      "quote_from_note": "no in-network therapist within 40 miles had a new-patient opening before June; she contacted four listed providers",
+      "supports": true
+    },
+    {
+      "fact": "Objective improvement on standardized measure \u2014 treatment is effective and ongoing need remains.",
+      "quote_from_note": "GAD-7 score improved from 15 (severe) at intake in January to 9 (moderate) today.",
+      "supports": true
+    },
+    {
+      "fact": "Treatment is still clinically incomplete.",
+      "quote_from_note": "Good progress on measurable goals but not yet at treatment completion.",
+      "supports": true
+    }
+  ],
+  "scoring": {
+    "score": 62,
+    "base_estimate": 42,
+    "action": "APPEAL",
+    "reasons": [
+      "Model's base assessment: 42/100 \u2014 out-of-network exclusions are hard, but parity/network-adequacy arguments exist.",
+      "+20 \u2014 two or more supporting quotes found in the chart.",
+      "Payer's own policy BH-N1 allows a network-adequacy override; the note documents 4 failed in-network attempts.",
+      "Final score 62/100 \u2192 recommended action: APPEAL."
+    ]
+  },
+  "denial_sha256": "7815843f818eba6203daeaaabe3b652d71239e8f3751d366dbcf8668dcccba1d"
+}

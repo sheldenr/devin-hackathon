@@ -1,0 +1,27 @@
+BLUEGRASS INTERNAL MEDICINE
+Office Visit Note
+
+Patient: Susan Park    DOB: 02/14/1975    MRN: 317745
+Date: 04/02/2026
+Provider: Anita Reyes, MD    NPI: 1558207461
+
+CHIEF COMPLAINT: Hypertension follow-up.
+
+HISTORY: 51-year-old female returns for routine blood pressure check.
+Hypertension diagnosed 2023, controlled on lisinopril 10 mg daily. Home
+readings average 128/78. Denies headaches, chest pain, edema, or
+medication side effects. Adherent to low-sodium diet. No new complaints.
+ROS otherwise negative.
+
+EXAM: BP 132/82, HR 72, BMI 26.1. Heart regular rate and rhythm, no
+murmurs. Lungs clear. No peripheral edema.
+
+ASSESSMENT: Essential hypertension (I10), stable and well-controlled on
+current regimen.
+
+PLAN: Continue lisinopril 10 mg daily. Continue home BP monitoring.
+Routine labs ordered (BMP, lipids) for annual monitoring. Return in
+6 months, sooner if readings exceed 140/90.
+
+Anita Reyes, MD
+Electronically signed 04/02/2026

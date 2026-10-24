@@ -1,0 +1,40 @@
+MERIDIAN HEALTH PLAN
+Claims Administration Department
+4400 Ridgeline Parkway, Suite 900
+Springfield, IL 62704
+
+DATE OF NOTICE: 04/02/2026
+
+PROVIDER: Elena Voss, MD — Riverbend Spine & Family Medicine
+PATIENT: Marlene Kowalski
+MEMBER ID: MRK48291037
+CLAIM NUMBER: 20260314008712
+DATE OF SERVICE: 03/14/2026
+
+RE: CLAIM DENIAL — CPT 72148 (MRI, LUMBAR SPINE, WITHOUT CONTRAST)
+
+Dear Provider,
+
+The above-referenced claim in the amount of $1,840.00 has been denied.
+
+DENIAL REASON CODE: CO-50 — These are non-covered services because this is
+not deemed a "medical necessity" by the payer.
+
+Our medical review team has determined that the documentation submitted does
+not establish medical necessity for advanced imaging of the lumbar spine at
+this time. Per Meridian Medical Policy MP-IMG-114 ("Advanced Imaging of the
+Spine"), MRI of the lumbar spine requires documented failure of at least six
+(6) weeks of conservative management OR the presence of red-flag or
+progressive neurological findings.
+
+If you disagree with this determination, you may submit a formal appeal
+within 180 days of this notice. Include the clinical notes supporting
+medical necessity and a letter of explanation.
+
+Appeals fax: (217) 555-0142
+Appeals mailing address: PO Box 55090, Springfield, IL 62705
+
+Sincerely,
+
+Claims Review Unit
+Meridian Health Plan
