@@ -29,7 +29,11 @@ for _attempt in range(5):
 else:
     raise ImportError("could not import overturn package")
 
-st.set_page_config(page_title="Overturn", page_icon="⚖️", layout="wide")
+st.set_page_config(
+    page_title="Overturn",
+    page_icon=str(Path(__file__).resolve().parent / "assets" / "logo.png"),
+    layout="wide",
+)
 
 # ---------------------------------------------------------------- styles
 st.markdown(
@@ -359,12 +363,17 @@ def _render_case_detail(case: dict):
 
 # ---------------------------------------------------------------- sidebar
 with st.sidebar:
-    st.markdown(
-        '<div class="ot-serif" style="font-size:26px;margin-bottom:2px">⚖️ Overturn</div>'
-        '<div class="ot-muted" style="font-size:12.5px;margin-bottom:18px">'
-        "Denied claims, recovered — all local.</div>",
-        unsafe_allow_html=True,
-    )
+    c_logo, c_name = st.columns([1, 2])
+    with c_logo:
+        st.image(str(Path(__file__).resolve().parent / "assets" / "logo.png"), width=64)
+    with c_name:
+        st.markdown(
+            '<div class="ot-serif" style="font-size:26px;margin:8px 0 2px 0">Overturn</div>'
+            '<div class="ot-muted" style="font-size:12.5px">'
+            "Denied claims, recovered — all local.</div>",
+            unsafe_allow_html=True,
+        )
+    st.markdown('<div style="height:10px"></div>', unsafe_allow_html=True)
     PAGES = ["Overview", "Review Queue", "New Claim", "Settings"]
     default = PAGES.index("New Claim") if st.query_params.get("page") == "new" else 0
     st.query_params.clear()
