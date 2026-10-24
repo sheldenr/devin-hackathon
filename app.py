@@ -1,4 +1,5 @@
 """Overturn — denied claims, recovered. All local, all offline."""
+import difflib
 import html
 import json
 import re
@@ -20,11 +21,9 @@ st.set_page_config(page_title="Overturn", page_icon="⚖️", layout="wide")
 st.markdown(
     """
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&display=swap');
-
 html, body, [data-testid="stAppViewContainer"], .stApp {
     background-color: #f3efe4;
-    font-family: 'Inter', sans-serif;
+    font-family: 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
 }
 [data-testid="stHeader"] { background: transparent; }
 h1, h2, .ot-serif { font-family: 'DM Serif Display', Georgia, serif !important;
@@ -110,6 +109,18 @@ p, label, .stMarkdown { color: #24352e; }
 [data-testid="stDataFrame"] { background: #fcf9f1; border-radius: 14px;
     border: 1px solid #e3dccb; padding: 6px; }
 mark { background: #d8e4d2; color: #2f5d40; border-radius: 4px; padding: 0 3px; }
+
+/* inline diff (approval) */
+.df { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12.5px;
+      max-height: 280px; overflow-y: auto; }
+.df-del { background: #f2d4c8; color: #8c4a2f; padding: 1px 8px; border-radius: 6px; }
+.df-add { background: #d8e4d2; color: #2f5d40; padding: 1px 8px; border-radius: 6px; }
+.df-skip { color: #7d8a80; padding: 1px 8px; font-style: italic; }
+.ot-receipt {
+    background: #d8e4d2; color: #2f5d40; border: 1px solid #b7cbb0;
+    border-radius: 999px; padding: 8px 18px; font-size: 13px; font-weight: 600;
+    display: inline-block;
+}
 </style>
 """,
     unsafe_allow_html=True,
@@ -154,6 +165,86 @@ def resolution_text(case: dict) -> str:
     if case.get("status") == "won":
         return "Recovered on appeal"
     return "No action recommended"
+
+
+# ---------------------------------------------------------------- embeds
+_ASSETS = Path(__file__).resolve().parent / "overturn" / "assets"
+
+
+@st.cache_data(show_spinner=False)
+def _hairline_src() -> str:
+    return (_ASSETS / "hairline.js").read_text()
+
+
+def hairline(figure: str = "riffle", height: int = 240, intensity: float = 0.55):
+    """Pointer-reactive isometric figure (@lucasmarkes/hairline), themed to palette."""
+    st.iframe(
+        f"""<div id="hl" style="height:{height - 12}px;border-radius:14px;
+            --hairline-plate:#fcf9f1;--hairline-hi:#1c453a;--hairline-edge:#8a947f;
+            --hairline-mid:#b9bfa8;--hairline-lo:#e6e0cd"></div>
+        <script type="module">{_hairline_src()}
+        const fig = {figure}(document.getElementById('hl'),
+            {{intensity:{intensity}, theme:'light', play:true}});
+        </script>""",
+        height=height,
+    )
+
+
+# Port of ns-ui "airlift-slug-flow": air slugs rise through a conduit every
+# 1.8s at 140px/s, dragging a liquid plug into the accumulator basin.
+_AIRLIFT_HTML = """
+<canvas id="al" width="48" height="300" style="display:block;margin:0 auto"></canvas>
+<script>
+const cv = document.getElementById('al'), x = cv.getContext('2d');
+const W = 48, H = 300, CX = 24, RW = 10, TOP = 30, BOT = H - 6, SPEED = 140;
+let slugs = [], basin = 0, last = performance.now(), lastInject = 0;
+function rr(y, w, h, r) {
+  x.beginPath(); x.roundRect(CX - w / 2, y, w, h, r); x.fill();
+}
+function tick(t) {
+  const dt = (t - last) / 1000; last = t;
+  if (t - lastInject > 1800) { slugs.push(BOT); lastInject = t; }
+  for (let i = slugs.length - 1; i >= 0; i--) {
+    slugs[i] -= SPEED * dt;
+    if (slugs[i] - 18 < TOP) { slugs.splice(i, 1); basin = Math.min(basin + 1, 10); }
+  }
+  x.clearRect(0, 0, W, H);
+  x.strokeStyle = '#b9bfa8'; x.lineWidth = 1.5;
+  x.beginPath(); x.roundRect(CX - RW / 2, TOP, RW, H - TOP - 4, 5); x.stroke();
+  // accumulator basin
+  x.strokeStyle = '#8a947f';
+  x.beginPath(); x.roundRect(CX - 14, 6, 28, 20, 5); x.stroke();
+  if (basin) {
+    x.fillStyle = '#3f7a5c';
+    x.beginPath(); x.roundRect(CX - 12, 24 - 1.6 * basin, 24, 1.6 * basin, 3); x.fill();
+  }
+  for (const y of slugs) {
+    x.fillStyle = '#3f7a5c'; rr(y - 16, 9, 13, 4);   // liquid plug
+    x.fillStyle = '#1c453a'; rr(y - 3, 7, 10, 3);    // air slug
+  }
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+</script>
+"""
+
+
+def inline_diff(old: str, new: str) -> str:
+    """Line-level old→new diff as styled HTML (ns-ui approval-inline-diff port)."""
+    if old == new:
+        return ""
+    sm = difflib.SequenceMatcher(None, old.splitlines(), new.splitlines())
+    parts = []
+    for tag, i1, i2, j1, j2 in sm.get_opcodes():
+        if tag == "equal":
+            if parts and (i1, i2) != (0, 0):
+                parts.append('<div class="df-skip">· · ·</div>')
+            continue
+        for ln in old[i1:i2]:
+            parts.append(f'<div class="df-del">− {html.escape(ln)}</div>')
+        for ln in new[j1:j2]:
+            parts.append(f'<div class="df-add">+ {html.escape(ln)}</div>')
+    return "".join(parts)
 
 
 db.migrate()
@@ -250,6 +341,8 @@ with st.sidebar:
 if nav == "Overview":
     st.markdown('<div class="ot-serif" style="font-size:30px">Claims Resolution Dashboard</div>',
                 unsafe_allow_html=True)
+    with st.container(border=True):
+        hairline("riffle", height=210, intensity=0.6)
     stats = db.dashboard_stats()
     cases = db.list_cases()
     awaiting = sum(1 for c in cases if c["status"] == "appeal_ready")
@@ -385,10 +478,16 @@ elif nav == "New Case":
                     denial_text = extract_text(denial_file.getvalue(), denial_file.name)
                     note_text = extract_text(note_file.getvalue(), note_file.name)
             try:
-                prog = st.status("Running pipeline…", expanded=True)
-                with prog:
-                    result = run_pipeline(denial_text, note_text, model=model, on_step=st.write)
-                prog.update(label="Analysis complete", state="complete")
+                c_rail, c_run = st.columns([1, 5])
+                with c_rail:
+                    st.iframe(_AIRLIFT_HTML, height=310)
+                with c_run:
+                    prog = st.status("Running pipeline…", expanded=True)
+                    with prog:
+                        result = run_pipeline(
+                            denial_text, note_text, model=model, on_step=st.write
+                        )
+                    prog.update(label="Analysis complete", state="complete")
                 st.session_state["result"] = result
                 st.session_state["edited_letter"] = result.letter
                 if result.used_fallback:
@@ -479,30 +578,47 @@ elif nav == "New Case":
         elif res.scoring.action != "APPEAL":
             st.warning(f"Recommended action is **{res.scoring.action.replace('_',' ')}** — no appeal letter was generated.")
         else:
-            show_redacted = st.toggle("Show redacted version (what the LLM wrote)", value=False)
-            if show_redacted:
-                st.code(res.letter_redacted, language=None)
-            letter = st.text_area(
-                "Appeal letter (editable before sending)",
-                value=st.session_state.get("edited_letter", res.letter),
-                height=420,
+            already = (
+                res.case_id and (db.get_case(res.case_id) or {}).get("status") == "appealed"
             )
-            c1, c2, c3 = st.columns(3)
-            if c1.button("💾 Save edits"):
-                st.session_state["edited_letter"] = letter
+            if already or st.session_state.get(f"receipt_{res.case_id}"):
+                # ns-ui approval-inline-diff: decided rows collapse to a receipt
+                st.markdown(
+                    f'<div class="ot-receipt">✓ Approved — appeal submitted · '
+                    f'#{res.case_id:05d} · ${res.display_info.claim_amount:,.0f} · '
+                    f'{html.escape(res.display_info.payer)}</div>',
+                    unsafe_allow_html=True,
+                )
+            else:
+                show_redacted = st.toggle("Show redacted version (what the LLM wrote)", value=False)
+                if show_redacted:
+                    st.code(res.letter_redacted, language=None)
+                letter = st.text_area(
+                    "Appeal letter (editable before sending)",
+                    value=st.session_state.get("edited_letter", res.letter),
+                    height=420,
+                )
+                diff = inline_diff(res.letter, letter)
+                if diff:
+                    st.markdown("**Changes vs generated draft**")
+                    st.markdown(f'<div class="ot-card df">{diff}</div>', unsafe_allow_html=True)
+                c1, c2, c3 = st.columns(3)
+                if c1.button("💾 Save edits"):
+                    st.session_state["edited_letter"] = letter
+                    if res.case_id:
+                        db.update_letter(res.case_id, letter)
+                    st.toast("Saved")
+                c2.download_button(
+                    "⬇️ Download .docx",
+                    data=letter_to_docx(st.session_state.get("edited_letter", letter)),
+                    file_name="appeal_letter.docx",
+                    mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                )
                 if res.case_id:
-                    db.update_letter(res.case_id, letter)
-                st.toast("Saved")
-            c2.download_button(
-                "⬇️ Download .docx",
-                data=letter_to_docx(st.session_state.get("edited_letter", letter)),
-                file_name="appeal_letter.docx",
-                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            )
-            if res.case_id:
-                if c3.button("Approve & Resubmit", type="primary"):
-                    db.update_status(res.case_id, "appealed")
-                    st.toast("Marked as appeal submitted")
+                    if c3.button("Approve & Resubmit", type="primary"):
+                        db.update_status(res.case_id, "appealed")
+                        st.session_state[f"receipt_{res.case_id}"] = True
+                        st.rerun()
 
 
 # ================================================================ SETTINGS
