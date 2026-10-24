@@ -40,36 +40,36 @@ st.markdown(
     """
 <style>
 html, body, [data-testid="stAppViewContainer"], .stApp {
-    background-color: #f3efe4;
+    background-color: #f4f6f8;
     font-family: 'Avenir Next', 'Segoe UI', system-ui, sans-serif;
 }
 [data-testid="stHeader"] { background: transparent; }
 h1, h2, .ot-serif { font-family: 'DM Serif Display', Georgia, serif !important;
-                    color: #1f342d !important; letter-spacing: 0.2px; }
-h3 { color: #1f342d !important; }
-p, label, .stMarkdown { color: #24352e; }
+                    color: #3c4f63 !important; letter-spacing: 0.2px; }
+h3 { color: #3c4f63 !important; }
+p, label, .stMarkdown { color: #41566b; }
 
 /* sidebar */
-[data-testid="stSidebar"] { background: #ece6d5; border-right: 1px solid #ddd5c0; }
+[data-testid="stSidebar"] { background: #e9edf1; border-right: 1px solid #d8e0e7; }
 [data-testid="stSidebar"] h1, [data-testid="stSidebar"] p,
-[data-testid="stSidebar"] label { color: #24352e; }
+[data-testid="stSidebar"] label { color: #41566b; }
 
 /* cards */
 .ot-card {
-    background: #fcf9f1;
-    border: 1px solid #e3dccb;
+    background: #fcfdfe;
+    border: 1px solid #dde4ea;
     border-radius: 18px;
     padding: 20px 24px;
     box-shadow: 0 1px 3px rgba(31,52,45,.06);
     margin-bottom: 16px;
 }
-.ot-card-active { border: 1.5px solid #1c453a; }
-.ot-muted { color: #7d8a80; }
-.ot-big { font-size: 28px; font-weight: 700; color: #1f342d; }
+.ot-card-active { border: 1.5px solid #3c4f63; }
+.ot-muted { color: #7d8a99; }
+.ot-big { font-size: 28px; font-weight: 700; color: #3c4f63; }
 .ot-title { font-family: 'DM Serif Display', Georgia, serif; font-size: 32px;
-            color: #1f342d; margin: 4px 0 12px 0; }
+            color: #3c4f63; margin: 4px 0 12px 0; }
 .ot-chip {
-    display: inline-block; background: #e6e0cd; color: #4d5f55;
+    display: inline-block; background: #e2e7ec; color: #54677c;
     border-radius: 8px; padding: 3px 10px; font-size: 12.5px; font-weight: 600;
     margin-right: 6px;
 }
@@ -77,14 +77,14 @@ p, label, .stMarkdown { color: #24352e; }
     display: inline-block; border-radius: 999px; padding: 4px 14px;
     font-size: 12.5px; font-weight: 600;
 }
-.b-denied   { background: #f2d4c8; color: #8c4a2f; }
-.b-review   { background: #d8e4d2; color: #2f5d40; }
-.b-appeal   { background: #1c453a; color: #f3efe4; }
-.b-fix      { background: #efe0b8; color: #8a6d1f; }
-.b-noappeal { background: #e0ddd2; color: #5c665e; }
-.b-won      { background: #c4dbc4; color: #1e4620; }
-.b-lost     { background: #e8c9c9; color: #7d3131; }
-.b-draft    { background: #dde4ec; color: #33506e; }
+.b-denied   { background: #e9d6d1; color: #7d4a3c; }
+.b-review   { background: #dfe7ee; color: #42566a; }
+.b-appeal   { background: #3c4f63; color: #f4f6f8; }
+.b-fix      { background: #e8e2cc; color: #776f42; }
+.b-noappeal { background: #e4e7ea; color: #5c6673; }
+.b-won      { background: #d4e0da; color: #3a5f48; }
+.b-lost     { background: #e6cfd2; color: #7d4750; }
+.b-draft    { background: #dde4ec; color: #3c4f63; }
 
 /* metric bars */
 .ot-metric-row { display:flex; justify-content:space-between; align-items:center;
@@ -96,46 +96,46 @@ p, label, .stMarkdown { color: #24352e; }
     border-radius: 999px !important; font-weight: 600 !important;
 }
 .stButton > button[kind="primary"], .stDownloadButton > button {
-    background: #1c453a !important; color: #f3efe4 !important; border: none !important;
+    background: #3c4f63 !important; color: #f4f6f8 !important; border: none !important;
 }
 .stButton > button[kind="secondary"] {
-    background: transparent !important; color: #1c453a !important;
-    border: 1.5px solid #1c453a !important;
+    background: transparent !important; color: #3c4f63 !important;
+    border: 1.5px solid #3c4f63 !important;
 }
 
 /* tabs */
 .stTabs [data-baseweb="tab-list"] { gap: 8px; }
 .stTabs [data-baseweb="tab"] {
-    background: #ece6d5; border-radius: 999px; padding: 6px 18px;
+    background: #e9edf1; border-radius: 999px; padding: 6px 18px;
 }
-.stTabs [aria-selected="true"] { background: #1c453a !important; color: #f3efe4 !important; }
-.stTabs [aria-selected="true"] p { color: #f3efe4 !important; }
+.stTabs [aria-selected="true"] { background: #3c4f63 !important; color: #f4f6f8 !important; }
+.stTabs [aria-selected="true"] p { color: #f4f6f8 !important; }
 
 /* radio as nav */
 [data-testid="stSidebar"] .stRadio div[role="radiogroup"] label {
     background: transparent; border-radius: 12px; padding: 8px 14px; width: 100%;
 }
 [data-testid="stSidebar"] .stRadio div[role="radiogroup"] label:has(input:checked) {
-    background: #1c453a;
+    background: #3c4f63;
 }
 [data-testid="stSidebar"] .stRadio div[role="radiogroup"] label:has(input:checked) p {
-    color: #f3efe4 !important;
+    color: #f4f6f8 !important;
 }
 [data-testid="stSidebar"] .stRadio div[role="radiogroup"] label > div:first-child { display: none; }
 
 /* dataframe */
-[data-testid="stDataFrame"] { background: #fcf9f1; border-radius: 14px;
-    border: 1px solid #e3dccb; padding: 6px; }
-mark { background: #d8e4d2; color: #2f5d40; border-radius: 4px; padding: 0 3px; }
+[data-testid="stDataFrame"] { background: #fcfdfe; border-radius: 14px;
+    border: 1px solid #dde4ea; padding: 6px; }
+mark { background: #dfe7ee; color: #42566a; border-radius: 4px; padding: 0 3px; }
 
 /* inline diff (approval) */
 .df { font-family: ui-monospace, 'SF Mono', Menlo, monospace; font-size: 12.5px;
       max-height: 280px; overflow-y: auto; }
-.df-del { background: #f2d4c8; color: #8c4a2f; padding: 1px 8px; border-radius: 6px; }
-.df-add { background: #d8e4d2; color: #2f5d40; padding: 1px 8px; border-radius: 6px; }
-.df-skip { color: #7d8a80; padding: 1px 8px; font-style: italic; }
+.df-del { background: #e9d6d1; color: #7d4a3c; padding: 1px 8px; border-radius: 6px; }
+.df-add { background: #dfe7ee; color: #42566a; padding: 1px 8px; border-radius: 6px; }
+.df-skip { color: #7d8a99; padding: 1px 8px; font-style: italic; }
 .ot-receipt {
-    background: #d8e4d2; color: #2f5d40; border: 1px solid #b7cbb0;
+    background: #dfe7ee; color: #42566a; border: 1px solid #c2ced9;
     border-radius: 999px; padding: 8px 18px; font-size: 13px; font-weight: 600;
     display: inline-block;
 }
@@ -198,8 +198,8 @@ def hairline(figure: str = "riffle", height: int = 240, intensity: float = 0.55)
     """Pointer-reactive isometric figure (@lucasmarkes/hairline), themed to palette."""
     st.iframe(
         f"""<div id="hl" style="height:{height - 12}px;border-radius:14px;
-            --hairline-plate:#fcf9f1;--hairline-hi:#1c453a;--hairline-edge:#8a947f;
-            --hairline-mid:#b9bfa8;--hairline-lo:#e6e0cd"></div>
+            --hairline-plate:#fcfdfe;--hairline-hi:#3c4f63;--hairline-edge:#8a947f;
+            --hairline-mid:#b9bfa8;--hairline-lo:#e2e7ec"></div>
         <script type="module">{_hairline_src()}
         const fig = {figure}(document.getElementById('hl'),
             {{intensity:{intensity}, theme:'light', play:true}});
@@ -233,12 +233,12 @@ function tick(t) {
   x.strokeStyle = '#8a947f';
   x.beginPath(); x.roundRect(CX - 14, 6, 28, 20, 5); x.stroke();
   if (basin) {
-    x.fillStyle = '#3f7a5c';
+    x.fillStyle = '#5c7a8f';
     x.beginPath(); x.roundRect(CX - 12, 24 - 1.6 * basin, 24, 1.6 * basin, 3); x.fill();
   }
   for (const y of slugs) {
-    x.fillStyle = '#3f7a5c'; rr(y - 16, 9, 13, 4);   // liquid plug
-    x.fillStyle = '#1c453a'; rr(y - 3, 7, 10, 3);    // air slug
+    x.fillStyle = '#5c7a8f'; rr(y - 16, 9, 13, 4);   // liquid plug
+    x.fillStyle = '#3c4f63'; rr(y - 3, 7, 10, 3);    // air slug
   }
   requestAnimationFrame(tick);
 }
@@ -365,7 +365,7 @@ def _render_case_detail(case: dict):
 with st.sidebar:
     c_logo, c_name = st.columns([1, 2])
     with c_logo:
-        st.image(str(Path(__file__).resolve().parent / "assets" / "logo.png"), width=64)
+        st.image(str(Path(__file__).resolve().parent / "assets" / "logo.svg"), width=64)
     with c_name:
         st.markdown(
             '<div class="ot-serif" style="font-size:26px;margin:8px 0 2px 0">Overturn</div>'
@@ -439,7 +439,7 @@ if nav == "Overview":
         st.markdown("#### Denied $ by category")
         if stats["by_category"]:
             st.bar_chart(pd.DataFrame({"amount": stats["by_category"]}).rename_axis("category"),
-                         color="#1c453a")
+                         color="#3c4f63")
     with c_met:
         total = max(stats["n_cases"], 1)
         auto = sum(1 for c in cases if c.get("action") == "APPEAL")
@@ -447,11 +447,11 @@ if nav == "Overview":
             f"""<div class="ot-card">
             <div style="font-weight:700;margin-bottom:8px">Resolution Metrics</div>
             <div class="ot-metric-row"><span>Total Denied</span><b>{stats['n_cases']}</b></div>
-            <div class="ot-bar" style="background:#c98a6b;width:100%"></div>
+            <div class="ot-bar" style="background:#a8897a;width:100%"></div>
             <div class="ot-metric-row"><span>Auto-Drafted</span><b>{auto}</b></div>
-            <div class="ot-bar" style="background:#3f7a5c;width:{min(100, auto/total*100):.0f}%"></div>
+            <div class="ot-bar" style="background:#5c7a8f;width:{min(100, auto/total*100):.0f}%"></div>
             <div class="ot-metric-row"><span>Awaiting HITL Review</span><b>{awaiting}</b></div>
-            <div class="ot-bar" style="background:#8a6d1f;width:{min(100, awaiting/total*100):.0f}%"></div>
+            <div class="ot-bar" style="background:#776f42;width:{min(100, awaiting/total*100):.0f}%"></div>
             <div class="ot-muted" style="margin-top:10px;font-size:12px">
             Recovered to date: ${stats['won_amt']:,.0f}</div>
             </div>""",
@@ -512,18 +512,15 @@ elif nav == "New Claim":
                     denial_text = extract_text(denial_file.getvalue(), denial_file.name)
                     note_text = extract_text(note_file.getvalue(), note_file.name)
             try:
-                c_rail, c_run = st.columns([1, 5])
-                with c_rail:
-                    st.iframe(_AIRLIFT_HTML, height=310)
-                with c_run:
-                    electric_arc("⚡ Local model working — data stays on this machine",
-                                 height=110)
-                    prog = st.status("Running pipeline…", expanded=True)
-                    with prog:
-                        result = run_pipeline(
-                            denial_text, note_text, model=model, on_step=st.write
-                        )
-                    prog.update(label="Analysis complete", state="complete")
+                with st.container(border=True):
+                    gyremote("searching", size=72,
+                             label="Local model working — data stays on this machine")
+                prog = st.status("Running pipeline…", expanded=True)
+                with prog:
+                    result = run_pipeline(
+                        denial_text, note_text, model=model, on_step=st.write
+                    )
+                prog.update(label="Analysis complete", state="complete")
                 st.session_state["result"] = result
                 st.session_state["edited_letter"] = result.letter
                 if result.used_fallback:

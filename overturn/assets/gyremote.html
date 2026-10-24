@@ -1,0 +1,102 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root{--foreground:#3c4f63;--ns-muted:#7d8a99;--ns-accent:#8095ab;
+        --background:#f4f6f8;}
+  html,body{margin:0;background:transparent;
+    font-family:'Avenir Next','Segoe UI',system-ui,sans-serif;}
+  .gy{display:inline-flex;align-items:center;gap:10px;}
+  .gy span{font-size:14px;color:var(--ns-muted);}
+  svg{display:block;overflow:visible;}
+</style>
+</head>
+<body>
+<span class="gy" role="status" aria-live="polite">
+  <svg id="g" viewBox="0 0 100 100" width="__SIZE__" height="__SIZE__" aria-hidden="true"></svg>
+  <span id="lbl">__LABEL__</span>
+</span>
+<script>
+"use strict";
+// Vanilla port of ns-ui GyreMote: Fibonacci-sphere dot field, spin about a
+// tilted axis, depth-sorted paint back-to-front each frame.
+const STATE="__STATE__";
+const VB=100,CX=50,CY=50,SPHERE_R=38,GOLDEN=Math.PI*(3-Math.sqrt(5)),TILT=-0.42,TAU=Math.PI*2;
+const STATE_VEL={thinking:0.72,searching:0.52,done:0.05,idle:0.13};
+const STATE_SCALE={thinking:1,searching:1,done:0.84,idle:1};
+const SIZE=__SIZE__;
+const N=Math.max(80,Math.min(140,Math.round(80+(SIZE-24)*0.34)));
+
+const svg=document.getElementById('g');
+const circles=[];
+for(let i=0;i<N;i++){
+  const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  c.setAttribute('cx',CX);c.setAttribute('cy',CY);c.setAttribute('r',1.5);
+  c.style.fill='var(--ns-muted)';
+  svg.appendChild(c);circles.push(c);
+}
+const bx=new Float64Array(N),by=new Float64Array(N),bz=new Float64Array(N);
+for(let i=0;i<N;i++){
+  const y=1-(i/(N-1))*2,rad=Math.sqrt(Math.max(0,1-y*y)),th=i*GOLDEN;
+  bx[i]=Math.cos(th)*rad;by[i]=y;bz[i]=Math.sin(th)*rad;
+}
+const sx=new Float64Array(N),sy=new Float64Array(N),sr=new Float64Array(N),
+      so=new Float64Array(N),sd=new Float64Array(N),sf=new Uint8Array(N);
+const order=new Int32Array(N);for(let i=0;i<N;i++)order[i]=i;
+const cosT=Math.cos(TILT),sinT=Math.sin(TILT),R_FAR=1.15,R_NEAR=3.15;
+
+function drawFrame(angle,scale,bandCenter,dimFar){
+  const ca=Math.cos(angle),sa=Math.sin(angle),r=SPHERE_R*scale;
+  for(let i=0;i<N;i++){
+    const x0=bx[i],y0=by[i],z0=bz[i];
+    const xr=x0*ca+z0*sa,zr=-x0*sa+z0*ca;
+    const yv=y0*cosT-zr*sinT,zv=y0*sinT+zr*cosT;
+    const depth=(zv+1)*0.5,persp=1/(1-zv*0.16);
+    sx[i]=CX+xr*r*persp;sy[i]=CY-yv*r*persp;sd[i]=zv;
+    let rr=R_FAR+depth*(R_NEAR-R_FAR),oo=(0.12+depth*0.88)*dimFar,fill=depth>=0.5?1:0;
+    if(bandCenter!==null){
+      const d=Math.abs(y0-bandCenter);
+      if(d<0.26){const k=1-d/0.26;rr+=k*1.4;oo=Math.min(1,oo+k*0.6);fill=2;}
+    }
+    sr[i]=rr;so[i]=oo;sf[i]=fill;
+  }
+  for(let a=1;a<N;a++){
+    const v=order[a],kz=sd[v];let b=a-1;
+    while(b>=0&&sd[order[b]]>kz){order[b+1]=order[b];b--;}
+    order[b+1]=v;
+  }
+  for(let k=0;k<N;k++){
+    const i=order[k],c=circles[k];
+    c.setAttribute('cx',sx[i].toFixed(2));c.setAttribute('cy',sy[i].toFixed(2));
+    c.setAttribute('r',sr[i].toFixed(2));c.style.opacity=so[i].toFixed(3);
+    c.style.fill=sf[i]===2?'var(--ns-accent)':sf[i]===1?'var(--foreground)':'var(--ns-muted)';
+  }
+}
+
+if(matchMedia('(prefers-reduced-motion: reduce)').matches){
+  drawFrame(0.7,STATE==='done'?STATE_SCALE.done:1,
+            STATE==='searching'?0.12:null,STATE==='idle'?0.6:1);
+}else{
+  let raf=0,last=0,angle=0.3;
+  let vel=STATE_VEL[STATE],scale=STATE_SCALE[STATE];
+  function loop(now){
+    const t=now/1000,dt=last===0?1/60:Math.min(0.05,t-last);last=t;
+    vel+=(STATE_VEL[STATE]-vel)*(1-Math.exp(-dt*4));
+    scale+=(STATE_SCALE[STATE]-scale)*(1-Math.exp(-dt*5));
+    let ang=angle;
+    if(STATE==='idle')ang+=Math.sin(t*0.5)*0.12;
+    angle+=vel*dt;
+    const band=STATE==='searching'?Math.cos(t*(TAU/2.4))*0.92:null;
+    const dim=STATE==='idle'?0.62:1;
+    drawFrame(ang,scale,band,dim);
+    raf=requestAnimationFrame(loop);
+  }
+  const start=()=>{if(raf===0&&!document.hidden){last=0;raf=requestAnimationFrame(loop);}};
+  const stop=()=>{if(raf){cancelAnimationFrame(raf);raf=0;last=0;}};
+  document.addEventListener('visibilitychange',()=>document.hidden?stop():start());
+  start();
+}
+</script>
+</body>
+</html>

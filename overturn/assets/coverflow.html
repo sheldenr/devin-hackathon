@@ -4,8 +4,8 @@
 <meta charset="utf-8">
 <style>
   :root {
-    --background:#f3efe4; --foreground:#1f342d; --ns-muted:#7d8a80;
-    --border:#e3dccb; --surface:#fcf9f1; --radius-md:16px;
+    --background:#f4f6f8; --foreground:#3c4f63; --ns-muted:#7d8a99;
+    --border:#dde4ea; --surface:#fcfdfe; --radius-md:16px;
   }
   html,body{margin:0;padding:0;background:var(--background);
     font-family:'Avenir Next','Segoe UI',system-ui,sans-serif;}
@@ -117,7 +117,7 @@ for(let i=0;i<n;i++){
 const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const dpr=Math.min(2,window.devicePixelRatio||1);
 const seedOf=i=>ITEMS[i].seed??i*7+3;
-let fg={r:31,g:52,b:45},mut={r:125,g:138,b:128},brd={r:227,g:220,b:203},srf={r:252,g:249,b:241},dark=false;
+let fg={r:60,g:79,b:99},mut={r:125,g:138,b:153},brd={r:221,g:228,b:234},srf={r:252,g:253,b:254},dark=false;
 function deriveTokens(){
   const cs=getComputedStyle(document.documentElement);
   fg=parseColor(cs.getPropertyValue('--foreground'))||fg;
