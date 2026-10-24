@@ -10,10 +10,24 @@ import pandas as pd
 import streamlit as st
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from overturn import db, llm  # noqa: E402
-from overturn.export import letter_to_docx  # noqa: E402
-from overturn.pipeline import list_sample_cases, load_sample, run_pipeline  # noqa: E402
-from overturn.redact import re_identify  # noqa: E402
+# Streamlit's module watcher can purge overturn.* from sys.modules mid-import
+# on save; retry briefly to ride out the race.
+import time as _t
+for _attempt in range(5):
+    try:
+        from overturn import db, llm  # noqa: E402
+        from overturn.export import letter_to_docx  # noqa: E402
+        from overturn.pipeline import (  # noqa: E402
+            list_sample_cases,
+            load_sample,
+            run_pipeline,
+        )
+        from overturn.redact import re_identify  # noqa: E402
+        break
+    except KeyError:
+        _t.sleep(0.3)
+else:
+    raise ImportError("could not import overturn package")
 
 st.set_page_config(page_title="Overturn", page_icon="⚖️", layout="wide")
 
@@ -229,6 +243,22 @@ requestAnimationFrame(tick);
 """
 
 
+def claims_coverflow(cases: list[dict], height: int = 470):
+    """Claims as coverflow 'field notes' — vanilla port of ns-ui CausticCoverflow."""
+    src = (_ASSETS / "coverflow.html").read_text()
+    items = [
+        {
+            "title": c.get("payer") or c["name"] or "Claim",
+            "meta": f"{c.get('carc_code') or '—'} · #{c['id']:05d} · "
+            f"{STATUS_META.get(c['status'], (c['status'],))[0].upper()}",
+            "amount": f"${(c.get('claim_amount') or 0):,.0f}",
+            "seed": c["id"] * 7 + 3,
+        }
+        for c in cases
+    ]
+    st.iframe(src.replace("__ITEMS__", json.dumps(items)), height=height)
+
+
 def inline_diff(old: str, new: str) -> str:
     """Line-level old→new diff as styled HTML (ns-ui approval-inline-diff port)."""
     if old == new:
@@ -405,6 +435,8 @@ elif nav == "Denied Claims":
     if not cases:
         st.info("No claims yet — run a case or seed demo data from Settings.")
     else:
+        claims_coverflow(cases)
+        st.markdown("#### All claims")
         flt = st.multiselect(
             "Filter by status",
             list(STATUS_META.keys()),
