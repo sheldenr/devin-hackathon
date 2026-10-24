@@ -70,3 +70,14 @@ See [PLAN.md](PLAN.md) for the build plan.
 ## Team
 
 _Add names and roles here._
+
+## Running on this machine
+
+```bash
+ollama serve &                    # installed at ~/.local/bin/ollama
+.venv/bin/streamlit run app.py    # http://localhost:8501
+```
+
+Model: `llama3.2:3b` (pulled, CPU-friendly). Set `OVERTURN_MODEL` to use a
+bigger model on GPU machines. If Ollama is offline, sample cases fall back
+to cached `expected.json` analyses so the demo still works.
