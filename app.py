@@ -259,6 +259,16 @@ def claims_coverflow(cases: list[dict], height: int = 470):
     st.iframe(src.replace("__ITEMS__", json.dumps(items)), height=height)
 
 
+def electric_arc(text: str, href: str | None = None, height: int = 95):
+    """ns-ui border-electric-arc port: crackling border on a CTA or live panel."""
+    src = (_ASSETS / "electric_arc.html").read_text()
+    if href:
+        inner = f'<a class="btn" href="{href}" target="_top">{html.escape(text)}</a>'
+    else:
+        inner = f'<div class="btn static">{html.escape(text)}</div>'
+    st.iframe(src.replace("__INNER__", inner), height=height)
+
+
 def inline_diff(old: str, new: str) -> str:
     """Line-level old→new diff as styled HTML (ns-ui approval-inline-diff port)."""
     if old == new:
@@ -355,11 +365,10 @@ with st.sidebar:
         "Denied claims, recovered — all local.</div>",
         unsafe_allow_html=True,
     )
-    nav = st.radio(
-        "nav",
-        ["Overview", "Denied Claims", "Resolutions (Pending Approval)", "New Case", "Settings"],
-        label_visibility="collapsed",
-    )
+    PAGES = ["Overview", "Review Queue", "New Claim", "Settings"]
+    default = PAGES.index("New Claim") if st.query_params.get("page") == "new" else 0
+    st.query_params.clear()
+    nav = st.radio("nav", PAGES, index=default, label_visibility="collapsed")
     st.divider()
     if ollama_up:
         st.caption("🟢 Local model connected — 0 bytes leave this machine")
@@ -369,74 +378,33 @@ with st.sidebar:
 
 # ================================================================ OVERVIEW
 if nav == "Overview":
-    st.markdown('<div class="ot-serif" style="font-size:30px">Claims Resolution Dashboard</div>',
-                unsafe_allow_html=True)
-    with st.container(border=True):
-        hairline("riffle", height=210, intensity=0.6)
+    c_title, c_cta = st.columns([4, 1])
+    with c_title:
+        st.markdown('<div class="ot-serif" style="font-size:30px">Claims Resolution Dashboard</div>',
+                    unsafe_allow_html=True)
+        st.caption("🔒 Local model: `localhost:11434` — **0 bytes of patient data sent externally.**")
+    with c_cta:
+        electric_arc("⚡ New Claim", href="?page=new", height=96)
+
     stats = db.dashboard_stats()
     cases = db.list_cases()
     awaiting = sum(1 for c in cases if c["status"] == "appeal_ready")
 
-    left, right = st.columns([3, 1])
-    with left:
-        st.markdown('<div class="ot-card">', unsafe_allow_html=True)
-        c1, c2, c3, c4 = st.columns(4)
+    with st.container(border=True):
+        c1, c2, c3, c4, c5 = st.columns(5)
         c1.metric("Denied claims", stats["n_cases"])
         c2.metric("Denied $", f"${stats['total_denied']:,.0f}")
         c3.metric("Recovered $", f"${stats['won_amt']:,.0f}")
         c4.metric("Projected recovery", f"${stats['projected']:,.0f}")
-        st.markdown("</div>", unsafe_allow_html=True)
+        c5.metric("Awaiting review", awaiting)
 
-        st.markdown("#### Denied $ by category")
-        if stats["by_category"]:
-            st.bar_chart(pd.DataFrame({"amount": stats["by_category"]}).rename_axis("category"),
-                         color="#1c453a")
-
-    with right:
-        total = max(stats["n_cases"], 1)
-        auto = sum(1 for c in cases if c.get("action") == "APPEAL")
-        st.markdown(
-            f"""<div class="ot-card">
-            <div style="font-weight:700;margin-bottom:8px">Resolution Metrics</div>
-            <div class="ot-metric-row"><span>Total Denied</span><b>{stats['n_cases']}</b></div>
-            <div class="ot-bar" style="background:#c98a6b;width:{min(100, total/total*100):.0f}%"></div>
-            <div class="ot-metric-row"><span>Auto-Drafted</span><b>{auto}</b></div>
-            <div class="ot-bar" style="background:#3f7a5c;width:{min(100, auto/total*100):.0f}%"></div>
-            <div class="ot-metric-row"><span>Awaiting HITL Review</span><b>{awaiting}</b></div>
-            <div class="ot-bar" style="background:#8a6d1f;width:{min(100, awaiting/total*100):.0f}%"></div>
-            <div class="ot-muted" style="margin-top:10px;font-size:12px">
-            Recovered to date: ${stats['won_amt']:,.0f}</div>
-            </div>""",
-            unsafe_allow_html=True,
-        )
-
-    st.markdown("#### Recent cases")
-    recent = cases[:6]
-    for c in recent:
-        st.markdown(
-            f"""<div class="ot-card" style="padding:14px 20px">
-            <div style="display:flex;justify-content:space-between;align-items:center">
-              <div>
-                <span class="ot-chip">{html.escape(c['category'] or '—')}</span>
-                <b>{html.escape(c['name'] or 'Case')}</b>
-                <span class="ot-muted"> · {html.escape(c['payer'] or '')} · {c['carc_code'] or ''}</span>
-              </div>
-              <div><b>${(c['claim_amount'] or 0):,.0f}</b>&nbsp;&nbsp;{badge(c['status'])}</div>
-            </div></div>""",
-            unsafe_allow_html=True,
-        )
-
-
-# ================================================================ DENIED CLAIMS
-elif nav == "Denied Claims":
-    st.markdown('<div class="ot-serif" style="font-size:30px">Denied Claims</div>',
-                unsafe_allow_html=True)
-    cases = db.list_cases()
-    if not cases:
-        st.info("No claims yet — run a case or seed demo data from Settings.")
-    else:
+    if cases:
         claims_coverflow(cases)
-        st.markdown("#### All claims")
+
+    st.markdown("#### All claims")
+    if not cases:
+        st.info("No claims yet — hit **New Claim** to analyze a denial.")
+    else:
         flt = st.multiselect(
             "Filter by status",
             list(STATUS_META.keys()),
@@ -457,11 +425,36 @@ elif nav == "Denied Claims":
             case = db.get_case(int(df.iloc[selected[0]]["id"]))
             _render_case_detail(case)
 
+    c_chart, c_met = st.columns([2, 1])
+    with c_chart:
+        st.markdown("#### Denied $ by category")
+        if stats["by_category"]:
+            st.bar_chart(pd.DataFrame({"amount": stats["by_category"]}).rename_axis("category"),
+                         color="#1c453a")
+    with c_met:
+        total = max(stats["n_cases"], 1)
+        auto = sum(1 for c in cases if c.get("action") == "APPEAL")
+        st.markdown(
+            f"""<div class="ot-card">
+            <div style="font-weight:700;margin-bottom:8px">Resolution Metrics</div>
+            <div class="ot-metric-row"><span>Total Denied</span><b>{stats['n_cases']}</b></div>
+            <div class="ot-bar" style="background:#c98a6b;width:100%"></div>
+            <div class="ot-metric-row"><span>Auto-Drafted</span><b>{auto}</b></div>
+            <div class="ot-bar" style="background:#3f7a5c;width:{min(100, auto/total*100):.0f}%"></div>
+            <div class="ot-metric-row"><span>Awaiting HITL Review</span><b>{awaiting}</b></div>
+            <div class="ot-bar" style="background:#8a6d1f;width:{min(100, awaiting/total*100):.0f}%"></div>
+            <div class="ot-muted" style="margin-top:10px;font-size:12px">
+            Recovered to date: ${stats['won_amt']:,.0f}</div>
+            </div>""",
+            unsafe_allow_html=True,
+        )
+
 
 # ================================================================ RESOLUTIONS
-elif nav == "Resolutions (Pending Approval)":
-    st.markdown('<div class="ot-serif" style="font-size:30px">Resolutions — Pending Approval</div>',
+elif nav == "Review Queue":
+    st.markdown('<div class="ot-serif" style="font-size:30px">Review Queue</div>',
                 unsafe_allow_html=True)
+    st.caption("Drafted appeals and resubmissions waiting for a human to sign off.")
     cases = [c for c in db.list_cases() if c["status"] in ("appeal_ready", "fix_resubmit", "denied")
              and c.get("action") in ("APPEAL", "FIX_AND_RESUBMIT")]
     if not cases:
@@ -475,8 +468,8 @@ elif nav == "Resolutions (Pending Approval)":
 
 
 # ================================================================ NEW CASE
-elif nav == "New Case":
-    st.markdown('<div class="ot-serif" style="font-size:30px">New Case</div>',
+elif nav == "New Claim":
+    st.markdown('<div class="ot-serif" style="font-size:30px">New Claim</div>',
                 unsafe_allow_html=True)
     st.caption("🔒 Local model: `localhost:11434` — **0 bytes of patient data sent externally.**")
 
@@ -514,6 +507,8 @@ elif nav == "New Case":
                 with c_rail:
                     st.iframe(_AIRLIFT_HTML, height=310)
                 with c_run:
+                    electric_arc("⚡ Local model working — data stays on this machine",
+                                 height=110)
                     prog = st.status("Running pipeline…", expanded=True)
                     with prog:
                         result = run_pipeline(

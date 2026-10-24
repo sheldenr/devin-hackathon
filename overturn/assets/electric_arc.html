@@ -1,0 +1,188 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  :root{--foreground:#1f342d;--ns-accent:#43aa72;--background:#f3efe4;}
+  html,body{margin:0;background:transparent;
+    font-family:'Avenir Next','Segoe UI',system-ui,sans-serif;}
+  #wrap{position:relative;display:inline-block;margin:19px;}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;
+    border:none;border-radius:12px;background:var(--foreground);
+    color:#f3efe4;font:600 15px/1 'Avenir Next','Segoe UI',sans-serif;
+    cursor:pointer;text-decoration:none;letter-spacing:.01em;}
+  .btn.static{cursor:default;background:transparent;color:var(--foreground);
+    border:1px solid transparent;}
+  .btn:not(.static):hover{background:#163830;}
+  .btn:focus-visible{outline:2px solid var(--ns-accent);outline-offset:3px;}
+  svg.fx{position:absolute;inset:0;pointer-events:none;overflow:visible;}
+  @media (prefers-reduced-motion: reduce){
+    svg.fx{display:none;}
+    .btn:not(.static):hover{box-shadow:0 0 0 3px color-mix(in srgb,var(--ns-accent) 40%,transparent);}
+  }
+</style>
+</head>
+<body>
+<div id="wrap">
+  __INNER__
+  <svg class="fx" aria-hidden="true">
+    <defs>
+      <filter id="crk" x="-20%" y="-20%" width="140%" height="140%">
+        <feTurbulence id="tb" type="fractalNoise" baseFrequency="0.02 0.09"
+                      numOctaves="2" seed="3" result="n"/>
+        <feDisplacementMap id="dp" in="SourceGraphic" in2="n" scale="2.8"/>
+      </filter>
+      <filter id="gl" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="3.5"/>
+      </filter>
+    </defs>
+    <path id="glow" fill="none" stroke="var(--ns-accent)" stroke-width="5"
+          filter="url(#gl)" opacity="0.3"/>
+    <path id="core" fill="none" stroke="var(--foreground)" stroke-width="1.5"
+          filter="url(#crk)"/>
+    <path id="gaparc" fill="none" stroke="var(--foreground)" stroke-width="1.4"
+          style="filter:drop-shadow(0 0 2px var(--ns-accent)) drop-shadow(0 0 6px var(--ns-accent))" opacity="0"/>
+    <path id="sp1" fill="none" stroke="var(--ns-accent)" stroke-width="1.3" opacity="0"/>
+    <path id="sp2" fill="none" stroke="var(--ns-accent)" stroke-width="1.1" opacity="0"/>
+  </svg>
+</div>
+<script>
+"use strict";
+// Vanilla port of ns-ui border-electric-arc: crackling SVG border (feTurbulence
+// displacement), cursor-tracking gap with a jumping arc, corner micro-arcs,
+// discharge on press. Tokens: --foreground core, --ns-accent glow.
+const wrap=document.getElementById('wrap'),svg=wrap.querySelector('svg.fx');
+const core=document.getElementById('core'),glow=document.getElementById('glow');
+const gaparc=document.getElementById('gaparc');
+const tb=document.getElementById('tb'),dp=document.getElementById('dp');
+const sparks=[document.getElementById('sp1'),document.getElementById('sp2')];
+const btn=wrap.querySelector('.btn');
+const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
+let P=0,offX=0,offY=0,spentUntil=0,visible=true;
+
+function size(){
+  const r=btn.getBoundingClientRect();
+  svg.setAttribute('width',r.width+38);svg.setAttribute('height',r.height+38);
+  svg.style.left=(-19)+'px';svg.style.top=(-19)+'px';
+  svg.style.width=(r.width+38)+'px';svg.style.height=(r.height+38)+'px';
+  offX=19;offY=19;
+  const w=r.width,h=r.height,rad=10;
+  const d=`M ${offX+rad} ${offY} H ${offX+w-rad} A ${rad} ${rad} 0 0 1 ${offX+w} ${offY+rad}
+    V ${offY+h-rad} A ${rad} ${rad} 0 0 1 ${offX+w-rad} ${offY+h}
+    H ${offX+rad} A ${rad} ${rad} 0 0 1 ${offX} ${offY+h-rad}
+    V ${offY+rad} A ${rad} ${rad} 0 0 1 ${offX+rad} ${offY} Z`;
+  core.setAttribute('d',d);glow.setAttribute('d',d);
+  P=core.getTotalLength();
+}
+new ResizeObserver(size).observe(btn);
+
+// crackle: reseed turbulence every 150ms (skipped while hidden/spent-alt)
+let tickAlt=false;
+setInterval(()=>{
+  if(document.hidden||!visible||reduced)return;
+  if(performance.now()<spentUntil){tickAlt=!tickAlt;if(tickAlt)return;}
+  tb.setAttribute('seed',String(Math.floor(Math.random()*90)));
+  tb.setAttribute('baseFrequency',(0.016+Math.random()*0.012)+' '+(0.07+Math.random()*0.04));
+},150);
+
+// gap follows cursor
+let gapTarget=0,gap=0,gapS=0,gapRaf=0;
+function tweenGap(){
+  gap+=(gapTarget-gap)*0.35;
+  if(Math.abs(gapTarget-gap)<0.6){
+    gap=gapTarget;gapRaf=0;
+    if(gap===0){core.removeAttribute('stroke-dasharray');core.removeAttribute('stroke-dashoffset');
+      glow.removeAttribute('stroke-dasharray');glow.removeAttribute('stroke-dashoffset');
+      gaparc.setAttribute('opacity','0');}
+    return;
+  }
+  applyGap();gapRaf=requestAnimationFrame(tweenGap);
+}
+function applyGap(){
+  const g=Math.min(gap,P-4),s=gapS;
+  for(const p of [core,glow]){
+    p.setAttribute('stroke-dasharray',`${P-g} ${g}`);
+    p.setAttribute('stroke-dashoffset',P-s-g/2);
+  }
+  // jagged arc spanning the gap lips
+  const a=core.getPointAtLength(((s-g/2)%P+P)%P);
+  const b=core.getPointAtLength(((s+g/2)%P+P)%P);
+  const mx=(a.x+b.x)/2,my=(a.y+b.y)/2;
+  const nx=-(b.y-a.y),ny=(b.x-a.x),nl=Math.hypot(nx,ny)||1;
+  const j1x=a.x+(b.x-a.x)*0.33+nx/nl*(Math.random()*5-2.5);
+  const j1y=a.y+(b.y-a.y)*0.33+ny/nl*(Math.random()*5-2.5);
+  const j2x=a.x+(b.x-a.x)*0.66+nx/nl*(Math.random()*5-2.5);
+  const j2y=a.y+(b.y-a.y)*0.66+ny/nl*(Math.random()*5-2.5);
+  gaparc.setAttribute('d',`M ${a.x} ${a.y} L ${j1x} ${j1y} L ${j2x} ${j2y} L ${b.x} ${b.y}`);
+  gaparc.setAttribute('opacity','0.95');
+}
+addEventListener('pointermove',e=>{
+  if(reduced||performance.now()<spentUntil)return;
+  const r=btn.getBoundingClientRect();
+  const px=e.clientX-r.left,py=e.clientY-r.top,w=r.width,h=r.height;
+  // distance to nearest of the four straight edges
+  const cx=clamp(px,0,w),cy=clamp(py,0,h);
+  const dists=[
+    {d:Math.abs(py),s:cx},                    // top
+    {d:Math.abs(px-w),s:w+cy},                // right
+    {d:Math.abs(py-h),s:2*w+h-cx},            // bottom
+    {d:Math.abs(px),s:2*w+2*h-cy},            // left
+  ];
+  const near=Math.min(dists[0].d,dists[1].d,dists[2].d,dists[3].d);
+  const inBand=(px>-30&&px<w+30&&py>-30&&py<h+30)&&near<30;
+  if(inBand){
+    const best=dists.reduce((a,b)=>b.d<a.d?b:a);
+    const analytic=2*w+2*h,k=P/analytic;
+    gapS=clamp(best.s*k,gapTarget? gapTarget/2:0,P);
+    gapTarget=16;
+    glow.setAttribute('opacity','0.55');
+  }else{gapTarget=0;glow.setAttribute('opacity','0.3');}
+  if(!gapRaf)gapRaf=requestAnimationFrame(tweenGap);
+});
+function clamp(v,a,b){return Math.min(b,Math.max(a,v));}
+
+// corner micro-arcs: 3-seg jagged branch, occasional fork
+function microArc(){
+  if(!visible||document.hidden||reduced||performance.now()<spentUntil){schedule();return;}
+  const r=btn.getBoundingClientRect(),corners=[[0,0],[r.width,0],[r.width,r.height],[0,r.height]];
+  const [cx,cy]=corners[Math.floor(Math.random()*4)];
+  const dx=cx===0?-1:1,dy=cy===0?-1:1;
+  let d='',x=offX+cx,y=offY+cy;d=`M ${x} ${y}`;
+  for(let i=0;i<3;i++){x+=dx*(3+Math.random()*4);y+=dy*(Math.random()*2.5);d+=` L ${x} ${y}`;}
+  const sp=sparks[Math.floor(Math.random()*2)];
+  sp.setAttribute('d',d);sp.style.transition='none';sp.setAttribute('opacity','0.95');
+  if(Math.random()<0.4){
+    const sp2=sparks[1-sparks.indexOf(sp)];
+    let d2=`M ${offX+cx} ${offY+cy}`,x2=offX+cx,y2=offY+cy;
+    for(let i=0;i<2;i++){x2+=dx*(Math.random()*4);y2+=dy*(3+Math.random()*4);d2+=` L ${x2} ${y2}`;}
+    sp2.setAttribute('d',d2);sp2.style.transition='none';sp2.setAttribute('opacity','0.8');
+    requestAnimationFrame(()=>{sp2.style.transition='opacity .22s';sp2.setAttribute('opacity','0');});
+  }
+  requestAnimationFrame(()=>{sp.style.transition='opacity .22s';sp.setAttribute('opacity','0');});
+  schedule();
+}
+function schedule(){setTimeout(microArc,1000+Math.random()*2000);}
+schedule();
+
+// discharge on press (or keyboard activation)
+function discharge(){
+  if(reduced)return;
+  core.style.transition='stroke-width .08s';core.setAttribute('stroke-width','2.6');
+  core.setAttribute('opacity','1');glow.setAttribute('opacity','1');
+  setTimeout(()=>{
+    core.setAttribute('stroke-width','1.5');core.setAttribute('opacity','0.65');
+    glow.setAttribute('opacity','0.12');dp.setAttribute('scale','1.1');
+    spentUntil=performance.now()+2000;
+    setTimeout(()=>{core.setAttribute('opacity','1');glow.setAttribute('opacity','0.3');
+      dp.setAttribute('scale','2.8');},2000);
+  },340);
+}
+if(!btn.classList.contains('static')){
+  btn.addEventListener('pointerdown',discharge);
+  btn.addEventListener('click',e=>{if(e.detail===0)discharge();});
+}
+new IntersectionObserver(en=>{visible=en[0]?.isIntersecting??true;}).observe(wrap);
+size();
+</script>
+</body>
+</html>
