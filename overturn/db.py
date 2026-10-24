@@ -50,6 +50,34 @@ def _conn() -> sqlite3.Connection:
     return conn
 
 
+def migrate():
+    """Add columns introduced after the initial schema."""
+    conn = _conn()
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(cases)")}
+    for col, ddl in (("reviewer", "TEXT"), ("assignee", "TEXT")):
+        if col not in cols:
+            conn.execute(f"ALTER TABLE cases ADD COLUMN {col} {ddl}")
+    conn.commit()
+    conn.close()
+
+
+def get_case(case_id: int) -> dict | None:
+    conn = _conn()
+    row = conn.execute("SELECT * FROM cases WHERE id=?", (case_id,)).fetchone()
+    conn.close()
+    return dict(row) if row else None
+
+
+def update_assignment(case_id: int, reviewer: str = "", assignee: str = ""):
+    conn = _conn()
+    with conn:
+        conn.execute(
+            "UPDATE cases SET reviewer=?, assignee=? WHERE id=?",
+            (reviewer, assignee, case_id),
+        )
+    conn.close()
+
+
 def save_case(case: dict) -> int:
     conn = _conn()
     cols = [
